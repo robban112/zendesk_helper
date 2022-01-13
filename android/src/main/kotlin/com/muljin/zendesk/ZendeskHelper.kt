@@ -142,7 +142,7 @@ try {
 try {
   MessagingActivity.builder()
           .withToolbarTitle("Contact Us")
-          .withEngines(ChatEngine.engine())
+          .withEngines(ChatEngine.engine(), AnswerBotEngine.engine(), SupportEngine.engine())
           .show(activity, chatConfiguration)
 }catch ( e:Exception){
  throw e;
