@@ -9,7 +9,7 @@ class Zendesk {
   static const MethodChannel _channel = MethodChannel('zendesk');
 
   /// Initialize the Zendesk SDK with the provided [accountKey] and [appId]
-  ///
+  /// This will also add AnswerBotEngine and SupportEngine
   /// Offical Docs
   /// iOS: https://developer.zendesk.com/embeddables/docs/chat-sdk-v-2-for-ios/getting_started#initializing-the-sdk
   /// Android: https://developer.zendesk.com/embeddables/docs/chat-sdk-v-2-for-android/getting_started#initializing-the-sdk
@@ -49,7 +49,8 @@ class Zendesk {
   /// chat transcript at the end of the chat.
   ///
   /// If [isOfflineFormEnabled] is true, the offline form will be shown to the user.
-  static Future<void> startChat({bool? isDarkTheme,
+  static Future<void> startChat({
+    bool? isDarkTheme,
     Color? primaryColor,
     bool isPreChatFormEnabled = true,
     bool isAgentAvailabilityEnabled = true,
