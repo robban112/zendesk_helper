@@ -3,7 +3,8 @@
    <application
         android:label="zendesk_example"
         android:icon="@mipmap/ic_launcher"
-        android:theme="@style/YourLightTheme1">
+        android:theme="@style/YourLightTheme1"
+        android:name="${applicationName}">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

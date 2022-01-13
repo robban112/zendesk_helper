@@ -1,6 +1,7 @@
 package com.muljin.zendesk
 
 import android.app.Activity
+import android.content.Context
 import android.util.Log
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
@@ -13,8 +14,25 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import zendesk.chat.*
+
+// Zendesk
+import zendesk.chat.Chat;
+import zendesk.chat.VisitorInfo;
+import zendesk.chat.ChatConfiguration;
+import zendesk.chat.ChatMenuAction;
+import zendesk.chat.ChatEngine;
+import zendesk.configurations.Configuration
+import zendesk.core.AnonymousIdentity.*
+import zendesk.core.*
+//import zendesk.core.Zendesk
 import zendesk.messaging.MessagingActivity
+import zendesk.support.Support
+import zendesk.support.SupportEngine
+import zendesk.support.guide.HelpCenterActivity
+import zendesk.support.request.RequestActivity
+import zendesk.support.requestlist.RequestListActivity
+import zendesk.answerbot.AnswerBotEngine;
+import zendesk.answerbot.AnswerBot;
 
 
 /** ZendeskHelper */
@@ -25,10 +43,12 @@ class ZendeskHelper : FlutterPlugin, MethodCallHandler, ActivityAware {
   // / when the Flutter Engine is detached from the Activity
   private lateinit var channel: MethodChannel
   private lateinit var activity: Activity
+  private lateinit var context: Context
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "zendesk")
     channel.setMethodCallHandler(this)
+    this.context = flutterPluginBinding.applicationContext
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -92,7 +112,12 @@ try {
     val accountKey = call.argument<String>("accountKey") ?: ""
     val applicationId = call.argument<String>("appId") ?: ""
 
+    Zendesk.INSTANCE.init(this.context, "https://surfboardsupport.zendesk.com/", applicationId, "mobile_sdk_client_79d3bb251381bec3a125");
     Chat.INSTANCE.init(activity, accountKey, applicationId)
+    Support.INSTANCE.init(Zendesk.INSTANCE)
+    AnswerBot.INSTANCE.init(Zendesk.INSTANCE, Support.INSTANCE)
+
+
   }
 
   fun setVisitorInfo(call: MethodCall) {
@@ -109,6 +134,14 @@ try {
                                     .withEmail(email)
                                     .withPhoneNumber(phoneNumber) // numeric string
                                     .build()
+
+    Zendesk.INSTANCE.setIdentity(
+      AnonymousIdentity.Builder()
+              .withNameIdentifier("{optional name}")
+              .withEmailIdentifier("{optional email}")
+              .build()
+    );
+
     profileProvider?.setVisitorInfo(visitorInfo, null)
     chatProvider?.setDepartment(department, null)
   }
@@ -142,7 +175,7 @@ try {
 try {
   MessagingActivity.builder()
           .withToolbarTitle("Contact Us")
-          .withEngines(ChatEngine.engine(), AnswerBotEngine.engine(), SupportEngine.engine())
+          .withEngines(AnswerBotEngine.engine(), ChatEngine.engine(), SupportEngine.engine())
           .show(activity, chatConfiguration)
 }catch ( e:Exception){
  throw e;

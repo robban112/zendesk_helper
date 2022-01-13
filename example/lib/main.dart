@@ -21,8 +21,8 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) {
       return;
     }
-             const _accountKey='C4NkxGBoxHSTMW3Gm3gznZ6AxIqYXWkZ';
-  const _appId='ff92947363297c35ad960e50edc747e7a19dbbd7235a852e';
+    const _accountKey = '';
+    const _appId = '';
 
     await Zendesk.initialize(_accountKey, _appId);
   }
@@ -61,10 +61,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> openChat() async {
     try {
       await Zendesk.setVisitorInfo(
-          name: 'Text Client',
-          email: 'test+client@example.com',
-          phoneNumber: '0000000000',
-          department: 'Support');
+          name: 'Text Client', email: 'test+client@example.com', phoneNumber: '0000000000', department: 'Support');
       await Zendesk.startChat(primaryColor: Colors.red);
     } on dynamic catch (ex) {
       print('An error occured $ex');
